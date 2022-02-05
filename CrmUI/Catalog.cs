@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CrmBL.Model;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,9 +15,15 @@ namespace CrmUI
     public partial class Catalog<T> : Form
         where T : class
     {
-        public Catalog(DbSet<T> set)
+        CrmContext db;
+        DbSet<T> set;
+        public Catalog(DbSet<T> set, CrmContext db)
         {
             InitializeComponent();
+
+            this.db = db;
+            this.set = set;
+            set.Load();
             dataGridView.DataSource = set.Local.ToBindingList();
         }
 
@@ -24,5 +31,92 @@ namespace CrmUI
         {
 
         }
+
+        private void buttonAdd_Click(object sender, EventArgs e)
+        {
+            if (typeof(T) == typeof(Product))
+            {
+                var form = new ProductForm();
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    
+                }
+            }
+            else if (typeof(T) == typeof(Seller))
+            {
+                var form = new SellerForm();
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+
+                }
+            }
+            else if (typeof(T) == typeof(Customer))
+            {
+                var form = new CustomerForm();
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+
+                }
+            }
+        }
+
+        private void buttonEdit_Click(object sender, EventArgs e)
+        {
+            var id = dataGridView.SelectedRows[0].Cells[0].Value;
+
+            if (typeof(T) == typeof(Product))
+            {
+                var product = set.Find(id) as Product;
+                if (product != null)
+                {
+                    var form = new ProductForm(product);
+                    if (form.ShowDialog() == DialogResult.OK)
+                    {
+                        product = form.Product;
+                        db.SaveChanges();
+                        dataGridView.Update();
+                    }
+                }
+            }
+            else if (typeof(T) == typeof(Seller))
+            {
+                var seller = set.Find(id) as Seller;
+                if (seller != null)
+                {
+                    var form = new SellerForm(seller);
+                    if (form.ShowDialog() == DialogResult.OK)
+                    {
+                        seller = form.Seller;
+                        db.SaveChanges();
+                        dataGridView.Update();
+                    }
+                }
+            }
+            else if (typeof(T) == typeof(Customer))
+            {
+                var customer = set.Find(id) as Customer;
+                if (customer != null)
+                {
+                    var form = new CustomerForm(customer);
+                    if (form.ShowDialog() == DialogResult.OK)
+                    {
+                        customer = form.Customer;
+                        db.SaveChanges();
+                        dataGridView.Update();
+                    }
+                }
+            }
+        }
+
+        private void buttonDelete_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        //private void Update(int id, Type type)
+        //{
+        //    var t = type.GetType();
+        //    var item = set.Find(id) as typeof(t);
+        //}
     }
 }
