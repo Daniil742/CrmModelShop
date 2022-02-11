@@ -21,7 +21,7 @@ namespace CrmUI
 
         public CustomerForm(Customer customer) : this()
         {
-            Customer = customer;
+            Customer = customer ?? new Customer();
             textBoxCustomerName.Text = Customer.Name;
         }
 
@@ -32,8 +32,8 @@ namespace CrmUI
 
         private void buttonCustomerAdd_Click(object sender, EventArgs e)
         {
-            var c = Customer ?? new Customer();
-            c.Name = textBoxCustomerName.Text;
+            Customer = Customer ?? new Customer();
+            Customer.Name = textBoxCustomerName.Text;
             Close();
         }
     }
